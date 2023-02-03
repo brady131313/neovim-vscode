@@ -1,0 +1,5 @@
+{
+  "better-escape.nvim": { "branch": "master", "commit": "6fed33809cde3b416087fc540ad9eb17ec470193" },
+  "lazy.nvim": { "branch": "main", "commit": "9b208696e139a404d159963b975a5b90af38439b" },
+  "mini.comment": { "branch": "main", "commit": "137cf43aaaed41c733a8e0087fab6ee08bb45293" }
+}
