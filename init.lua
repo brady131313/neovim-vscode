@@ -10,10 +10,23 @@ if not vim.loop.fs_stat(lazypath) then
 	})
 end
 vim.opt.rtp:prepend(lazypath)
-vim.g.mapleader = " "
 
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+local opt = vim.opt
 local in_vscode = vim.g.vscode ~= nil
--- print("Is vscode: " .. tostring(in_vscode))
+local map = vim.keymap.set
+
+opt.clipboard = "unnamedplus" -- system clipboard
+
+if not in_vs_code then
+	opt.expandtab = true -- use spaces instead of tabs
+	opt.shiftround = true -- round indent
+	opt.shiftwidth = 2 -- size of indent
+	opt.smartindent = true -- insert indents automatically
+	opt.tabstop = 2 -- number of spaces a tab counts for
+end
 
 require("lazy").setup({
 	{
@@ -28,25 +41,40 @@ require("lazy").setup({
 		config = function()
 			require("mini.comment").setup({
 				mappings = {
-					comment = '<leader>/',
-					comment_line = '<leader>/',
-				}
+					comment = "<leader>/",
+					comment_line = "<leader>/",
+				},
 			})
 		end,
 		cond = not in_vscode,
-	}
+	},
+	{
+		"phaazon/hop.nvim",
+		branch = "v2",
+		config = function()
+			local hop = require("hop")
+			hop.setup()
+
+			map("", "f", function()
+				hop.hint_char1({ current_line_only = true })
+			end, { remap = true })
+
+			map("", "F", function()
+				hop.hint_char1()
+			end, { remap = true })
+		end,
+	},
 })
 
-local map = vim.keymap.set
 if in_vscode then
-	map('n', '<leader>/', '<Plug>VSCodeCommentaryLine')
-	map('x', '<leader>/', '<Plug>VSCodeCommentary')
+	map("n", "<leader>/", "<Plug>VSCodeCommentaryLine")
+	map("x", "<leader>/", "<Plug>VSCodeCommentary")
 
-	map('n', '<leader>ff', ':Edit<CR>')
-	map('n', '<leader>fs', [[<Cmd>call VSCodeNotify('workbench.action.showAllSymbols')<CR>]])
-	
-	map('n', '<leader>x', ':Quit<CR>')
+	map("n", "<leader>ff", ":Edit<CR>")
+	map("n", "<leader>fs", [[<Cmd>call VSCodeNotify('workbench.action.showAllSymbols')<CR>]])
 
-	map({'n', 'x'}, '<S-h>', ':Tabprevious<CR>')
-	map({'n', 'x'}, '<S-l>', ':Tabnext<CR>')
+	map("n", "<leader>x", ":Quit<CR>")
+
+	map({ "n", "x" }, "<S-h>", ":Tabprevious<CR>")
+	map({ "n", "x" }, "<S-l>", ":Tabnext<CR>")
 end
